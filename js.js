@@ -1,11 +1,22 @@
-// START THE GAME, SHOW ALL
-
+// SET VARIABLES
 let start = document.getElementById("start_one");
 let center_block = document.getElementById("central_block");
 let last_block = document.getElementById("final_result");
 let stopp = document.getElementById("stop");
-console.log()
+let first_card = document.getElementById("card1");
+let second_card = document.getElementById("card2");
+let third_card = document.getElementById("card3");
+let figure_player = document.getElementById("player_choice");
+let weapon_choice = document.getElementById("choice");
+let figure_computer = document.getElementById("computer_choice");
+let result = document.getElementById("result");
+let player = "";
+let score_player = 0;
+let score_computer = 0;
+let round_counter = 1;
+let computer_bis ="";
 
+// SHOW THE GAME
 start.addEventListener("click", () => {
   if(getComputedStyle(center_block).getPropertyValue("display") === "none"){
     center_block.style.display = "flex";
@@ -16,29 +27,35 @@ start.addEventListener("click", () => {
   }
 })
 
-// CHOOSE THE WEAPON + PICTURE APPEARS ON THE RING + SCORE
-
-let first_card = document.getElementById("card1");
-let second_card = document.getElementById("card2");
-let third_card = document.getElementById("card3");
-let figure_player = document.getElementById("player_choice");
-let weapon_choice = document.getElementById("choice");
-let figure_computer = document.getElementById("computer_choice");
-let result = document.getElementById("result");
-let player = ";";
-let score_player = 0;
-let score_computer = 0;
-let round_counter = 1;
-let computer_bis ="";
-
-function show_result () {
-  result.textContent = `${score_player} - ${score_computer}`;
+// WHEN YOU CLICK ON CARD, CREATE ALL ANIMATION
+function choose_card (number, image, name) {
+number.addEventListener("click", () => {  
+  if (getComputedStyle(figure_player).getPropertyValue("visibility") === "hidden"){
+    counter ()
+    hide(image, name);
+    show_score();
+    start.textContent = "Next round";
+    reload_choice();
+    check_score();
+    return;
+  } else {
+    return;
+  }
+})
 }
 
-function hide (picture, weapon) {
-// DEFINE ALEA COMPUTER 
-  let computer = Math.floor((Math.random() * 3) + 1);
+// THREE CARDS AVAILABLE
+choose_card(first_card, "./stone.png", "STONE")
+choose_card(second_card, "./toilet-paper.png", "PAPER")
+choose_card(third_card, "./scissors.png", "SCISSORS")
 
+// INCREMENT THE COUNTER EACH ROUND
+let counter = () =>
+  round_counter = round_counter + 1;
+
+// DEFINE ALEA WEAPON COMPUTER + SHOW PICTURES RESULT ON RING
+function hide (picture, weapon) {
+  let computer = Math.floor((Math.random() * 3) + 1);
   switch(computer){
     case 1 :
       computer = "./stone.png";
@@ -56,65 +73,46 @@ function hide (picture, weapon) {
 
   figure_player.src = picture;
   figure_player.style.visibility = "visible";
-
   figure_computer.src= computer ;
   figure_computer.style.visibility = "visible";
-
   weapon_choice.style.visibility = "hidden";
-
   player = weapon;
 }
 
-first_card.addEventListener("click", () => {  
-  if (getComputedStyle(figure_player).getPropertyValue("visibility") === "hidden"){
-    counter ()
-    hide("./stone.png", "STONE");
-    show_score();
-    next_round();
-    reload_choice();
-    check_score();
-    return;
-  } else {
-    return;
+// COMPARAISON, DEFINE THE WINNER OF THE ROUND
+function show_score (){
+  const is_playerwinning = 
+    ((computer_bis === "STONE" && player === "PAPER")
+  || (computer_bis === "PAPER" && player === "SCISSORS")
+  || (computer_bis === 'SCISSORS' && player === "STONE"));
+  
+  if (computer_bis === player) {
+    show_result();
+  }else if (is_playerwinning){
+    score_player = score_player + 1;
+    show_result();
+  }else{
+    score_computer = score_computer + 1;
+    show_result();
   }
-})
-
-second_card.addEventListener("click", () => {  
-  if (getComputedStyle(figure_player).getPropertyValue("visibility") === "hidden"){
-    counter ()
-    hide("./toilet-paper.png", "PAPER");
-    show_score();
-    reload_choice();
-    check_score();
-    return;
-  } else {
-    return;
   }
-})
 
-third_card.addEventListener("click", () => {  
-  if (getComputedStyle(figure_player).getPropertyValue("visibility") === "hidden"){
-    counter ()
-    hide("./scissors.png", "SCISSORS");
-    show_score();
-    reload_choice();
-    check_score();
-    return;
-  } else {
-    return;
-  }
-})
+// MAKES THE MENU REAPPEAR
+function reload_choice(){
+  start.addEventListener("click", () => {  
+    weapon_choice.style.visibility = "visible";
+    figure_player.style.visibility = "hidden";
+    figure_computer.style.visibility = "hidden";
+    start.textContent = `Round ${round_counter}`;  
+})}
 
-function counter (){
-  round_counter = round_counter + 1;
-}
-
+// CHECK SCORE, AT 3 GAME IS STOPPED
 function check_score(){
   if (score_player === 3 || score_computer === 3){
     if (score_player === 3) {
-      last_block.textContent = "You WIN";
+      last_block.textContent = `You WIN in ${round_counter} round`;
     } else {
-      last_block.textContent = " The BIG Computer always wins";
+      last_block.textContent = "BIG Computer always wins";
     }
   center_block.style.display = "none";
   last_block.style.display = "flex"
@@ -125,42 +123,15 @@ function check_score(){
   })
 } else {
   return
-}
-}
+}}
 
-function next_round(){
-  start.textContent = "Next round";
-}
-
-function reload_choice(){
-  start.addEventListener("click", () => {  
-    weapon_choice.style.visibility = "visible";
-    figure_player.style.visibility = "hidden";
-    figure_computer.style.visibility = "hidden";
-    start.textContent = `Round ${round_counter}`;  
-})}
-
-function show_score (){
-const is_playerwinning = 
-  ((computer_bis === "STONE" && player === "PAPER")
-|| (computer_bis === "PAPER" && player === "SCISSORS")
-|| (computer_bis === 'SCISSORS' && player === "STONE"));
-
-if (computer_bis === player) {
-  show_result();
-  next_round();  
-}else if (is_playerwinning){
-  score_player = score_player + 1;
-  show_result();
-  next_round()
-}else{
-  score_computer = score_computer + 1;
-  show_result();
-  next_round()
-}
+// MODIFY HTML SCORE
+let show_result = () => {
+  result.textContent = `${score_player} - ${score_computer}`;
+  result.style.visibility = "visible";
 }
 
 // STOPPER THE GAME - BACK AT START
 stopp.addEventListener("click", () => { 
-  location.reload();
+    location.reload();
 })
