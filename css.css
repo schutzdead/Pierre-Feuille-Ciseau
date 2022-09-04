@@ -42,7 +42,7 @@ button {
 }
 
 
-#central_block{
+#central-block{
     display: none;
     margin: 100px 50px;
     row-gap: 10%;
@@ -50,7 +50,7 @@ button {
 
 }
 
-#final_result{
+#final-result{
     font-size: 60px;
     font-weight: 900;
     color: #1F2937;
@@ -70,13 +70,13 @@ button {
     visibility: visible;
 }
 
-.weapon_text{
+.weapon-text{
     font-size: 26px;
     font-weight: 900;
     color: #1F2937;
 }
 
-#card1, #card2, #card3{
+.card{
     border: 3px solid #3882F6;
     border-radius: 8px;
     width: 100px;
@@ -118,7 +118,7 @@ button {
     height: 65%;
 }
 
-.player_one, .computer{
+.player-one, .computer{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -126,7 +126,7 @@ button {
     gap:20%;
 }
 
-#player_choice, #computer_choice{
+#player-choice, #computer-choice{
     height: auto;
     width: 30%;
     visibility: hidden;
