@@ -70,6 +70,12 @@ button {
     visibility: visible;
 }
 
+.choice-image {
+    height: 60px;
+    width: 60px;
+    visibility: hidden;
+}
+
 .weapon-text{
     font-size: 26px;
     font-weight: 900;
@@ -124,12 +130,6 @@ button {
     justify-content: center;
     align-items: center;
     gap:20%;
-}
-
-#player-choice, #computer-choice{
-    height: auto;
-    width: 30%;
-    visibility: hidden;
 }
 
 #result{
