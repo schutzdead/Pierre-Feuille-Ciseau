@@ -1,137 +1,188 @@
 // SET VARIABLES
-let start = document.getElementById("start_one");
-let center_block = document.getElementById("central_block");
-let last_block = document.getElementById("final_result");
-let stopp = document.getElementById("stop");
-let first_card = document.getElementById("card1");
-let second_card = document.getElementById("card2");
-let third_card = document.getElementById("card3");
-let figure_player = document.getElementById("player_choice");
-let weapon_choice = document.getElementById("choice");
-let figure_computer = document.getElementById("computer_choice");
-let result = document.getElementById("result");
-let player = "";
-let score_player = 0;
-let score_computer = 0;
-let round_counter = 1;
-let computer_bis ="";
+
+const itemValues = {
+  rock: "ROCK",
+  paper: "PAPER",
+  scissors: "SCISSORS"
+};
+
+const items = {
+  rock: {
+    value: itemValues.rock,
+    imagePath: "stone.png",
+  },
+  paper: {
+    value: itemValues.paper,
+    imagePath: "toilet-paper.png",
+  },
+  scissors: {
+    value: itemValues.scissors,
+    imagePath: "scissors.png",
+  }
+}
+
+let startElement = document.getElementById("start-one");
+let centerBlock = document.getElementById("central-block");
+let lastBlock = document.getElementById("final-result");
+let stopElement = document.getElementById("stop");
+let weaponChoiceElement = document.getElementById("choice");
+let resultElement = document.getElementById("result");
+let roundCounter = 1;
+
+const computer = {
+  item: {
+    imagePath: "",
+    value: undefined
+  },
+  figureElement: document.getElementById("computer-choice"),
+  score: 0
+};
+
+const player = {
+  item: {
+    imagePath: "",
+    value: undefined
+  },
+  figureElement: document.getElementById("player-choice"),
+  score: 0,
+}
+
+let isPlayerChoosing = true;
+
+const firstCard = {
+  element: document.getElementById("card-stone"),
+  item: items.rock
+};
+const secondCard = {
+  element: document.getElementById("card-paper"),
+  item: items.paper
+};
+const thirdCard = {
+  element: document.getElementById("card-scissors"),
+  item: items.scissors
+};
+
+const cards = [firstCard, secondCard, thirdCard];
 
 // SHOW THE GAME
-start.addEventListener("click", () => {
-  if(getComputedStyle(center_block).getPropertyValue("display") === "none"){
-    center_block.style.display = "flex";
-    stopp.style.display = "unset";
-    start.textContent = `Round ${round_counter}`;  
-  } else {
-    return
+startElement.addEventListener("click", () => {
+  if (getComputedStyle(centerBlock).getPropertyValue("display") === "none") {
+    centerBlock.style.display = "flex";
+    stopElement.style.display = "unset";
+    startElement.textContent = `Round ${roundCounter}`;
   }
 })
 
 // WHEN YOU CLICK ON CARD, CREATE ALL ANIMATION
-function choose_card (number, image, name) {
-number.addEventListener("click", () => {  
-  if (getComputedStyle(figure_player).getPropertyValue("visibility") === "hidden"){
-    counter ()
-    hide(image, name);
-    show_score();
-    start.textContent = "Next round";
-    reload_choice();
-    check_score();
-    return;
-  } else {
-    return;
-  }
-})
+function defineCardEventListener(card, item) {
+  card.addEventListener("click", () => {
+    if (isPlayerChoosing) {
+      isPlayerChoosing = false;
+      incrementCounter();
+      setRingPicturesAndHideChoices(item);
+      showScore();
+      startElement.textContent = "Next round";
+      addStartElementReloadChoiceEvent();
+      checkScore();
+    }
+  })
 }
 
 // THREE CARDS AVAILABLE
-choose_card(first_card, "./stone.png", "STONE")
-choose_card(second_card, "./toilet-paper.png", "PAPER")
-choose_card(third_card, "./scissors.png", "SCISSORS")
+cards.forEach(card => {
+  defineCardEventListener(card.element, card.item);
+});
+
 
 // INCREMENT THE COUNTER EACH ROUND
-let counter = () =>
-  round_counter = round_counter + 1;
+function incrementCounter() {
+  roundCounter = roundCounter + 1;
+}
+
+function getRandomItem() {
+  let randomChoice = Math.floor((Math.random() * 3) + 1);
+  switch (randomChoice) {
+    case 1:
+      return items.rock;
+    case 2:
+      return items.paper;
+    case 3:
+      return items.scissors;
+  }
+}
 
 // DEFINE ALEA WEAPON COMPUTER + SHOW PICTURES RESULT ON RING
-function hide (picture, weapon) {
-  let computer = Math.floor((Math.random() * 3) + 1);
-  switch(computer){
-    case 1 :
-      computer = "./stone.png";
-      computer_bis = "STONE";
-    break;
-    case 2 :
-      computer = "./toilet-paper.png";
-      computer_bis = "PAPER";
-    break;
-    case 3 :
-      computer = "./scissors.png";
-      computer_bis = "SCISSORS";
-    break;
-  }    
+function setRingPicturesAndHideChoices(playerItem) {
 
-  figure_player.src = picture;
-  figure_player.style.visibility = "visible";
-  figure_computer.src= computer ;
-  figure_computer.style.visibility = "visible";
-  weapon_choice.style.visibility = "hidden";
-  player = weapon;
+  player.item.value = playerItem.value;
+  setPictureElement(playerItem.imagePath, player.figureElement);
+
+  computer.item = getRandomItem();
+  setPictureElement(computer.item.imagePath, computer.figureElement);
+
+  weaponChoiceElement.style.visibility = "hidden";
+}
+
+function setPictureElement(imagePath, element) {
+  element.src = imagePath;
+  element.style.visibility = "visible";
 }
 
 // COMPARAISON, DEFINE THE WINNER OF THE ROUND
-function show_score (){
-  const is_playerwinning = 
-    ((computer_bis === "STONE" && player === "PAPER")
-  || (computer_bis === "PAPER" && player === "SCISSORS")
-  || (computer_bis === 'SCISSORS' && player === "STONE"));
-  
-  if (computer_bis === player) {
-    show_result();
-  }else if (is_playerwinning){
-    score_player = score_player + 1;
-    show_result();
-  }else{
-    score_computer = score_computer + 1;
-    show_result();
+function showScore() {
+  const isPlayerWinning =
+    ((computer.item.value === itemValues.rock && player.item.value === itemValues.paper)
+      || (computer.item.value === itemValues.paper && player.item.value === itemValues.scissors)
+      || (computer.item.value === itemValues.scissors && player.item.value === itemValues.rock));
+
+  if (isPlayerWinning) {
+    player.score = player.score + 1;
+  } else if (computer.item.value !== player.item.value) {
+    computer.score = computer.score + 1;
   }
-  }
-
-// MAKES THE MENU REAPPEAR
-function reload_choice(){
-  start.addEventListener("click", () => {  
-    weapon_choice.style.visibility = "visible";
-    figure_player.style.visibility = "hidden";
-    figure_computer.style.visibility = "hidden";
-    start.textContent = `Round ${round_counter}`;  
-})}
-
-// CHECK SCORE, AT 3 GAME IS STOPPED
-function check_score(){
-  if (score_player === 3 || score_computer === 3){
-    if (score_player === 3) {
-      last_block.textContent = `You WIN in ${round_counter} round`;
-    } else {
-      last_block.textContent = "BIG Computer always wins";
-    }
-  center_block.style.display = "none";
-  last_block.style.display = "flex"
-  stopp.style.display = "none";
-  start.textContent = "New game";
-  start.addEventListener("click", () => { 
-    location.reload();
-  })
-} else {
-  return
-}}
-
-// MODIFY HTML SCORE
-let show_result = () => {
-  result.textContent = `${score_player} - ${score_computer}`;
-  result.style.visibility = "visible";
+  showResult();
 }
 
-// STOPPER THE GAME - BACK AT START
-stopp.addEventListener("click", () => { 
-    location.reload();
+// MAKES THE MENU REAPPEAR
+function addStartElementReloadChoiceEvent() {
+  startElement.removeEventListener("click", reloadChoice);
+  startElement.addEventListener("click", reloadChoice);
+}
+
+function reloadChoice() {
+  weaponChoiceElement.style.visibility = "visible";
+  player.figureElement.style.visibility = "hidden";
+  computer.figureElement.style.visibility = "hidden";
+  startElement.textContent = `Round ${roundCounter}`;
+
+  isPlayerChoosing = true;
+}
+
+// CHECK SCORE, AT 3 GAME IS stopED
+function checkScore() {
+  if (player.score === 3 || computer.score === 3) {
+    if (player.score === 3) {
+      lastBlock.textContent = `You WIN in ${roundCounter} round`;
+    } else {
+      lastBlock.textContent = "BIG Computer always wins";
+    }
+    centerBlock.style.display = "none";
+    lastBlock.style.display = "flex"
+    stopElement.style.display = "none";
+    startElement.textContent = "New game";
+    startElement.addEventListener("click", () => {
+      location.reload();
+    })
+  }
+}
+
+// MODIFY HTML SCORE
+let showResult = () => {
+  resultElement.textContent = `${player.score} - ${computer.score}`;
+  resultElement.style.visibility = "visible";
+}
+
+// stopER THE GAME - BACK AT START
+stopElement.addEventListener("click", () => {
+  location.reload();
 })
